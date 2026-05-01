@@ -110,9 +110,9 @@ class Product
     public function calcPrice(): float|string
     {
         $price = $this->priceAfterDiscount();
-        if($price > 0){
+        if ($price > 0) {
             return $price + ($price * $this->tax);
-        }else{
+        } else {
             return "Can't Calculate The Price";
         }
     }
@@ -177,6 +177,17 @@ class Book extends Product
             return "No Available Publishers";
         }
     }
+
+    public function getProductData(): array
+    {
+        $data = parent::getProductData();
+        $data['publishers'] = $this->publishers;
+        $data['writer'] = $this->writer;
+        $data['color'] = $this->color;
+        $data['supplier'] = $this->supplier;
+        $data['selectedPublisher'] = $this->selectedPublisher;
+        return $data;
+    }
 }
 class BabyCar extends Product
 {
@@ -205,7 +216,8 @@ class BabyCar extends Product
         $this->tax = $tax;
     }
 
-    public function setMaterial(string $material){
+    public function setMaterial(string $material)
+    {
         $this->materials[] = $material;
     }
     public function chooseMaterials(string $material)
@@ -218,82 +230,107 @@ class BabyCar extends Product
     }
     public function getMaterials(): array|string
     {
-        if(!empty($this->materials)){
+        if (!empty($this->materials)) {
             return $this->materials;
-        }else{
+        } else {
             return "No Available materials";
         }
     }
     public function calcPrice(): float|string
     {
         $price = $this->priceAfterDiscount();
-        if($price > 0){
+        if ($price > 0) {
             return $price + ($price * $this->tax);
-        }else{
+        } else {
             return "Can't Calculate The Price";
         }
+    }
+
+    public function getProductData(): array
+    {
+        $data = parent::getProductData();
+        $data['age'] = $this->age;
+        $data['weight'] = $this->weight;
+        $data['materials'] = $this->materials;
+        $data['selectedMaterial'] = $this->selectedMaterial;
+        return $data;
     }
 }
 
 
 
+$p1 = new Product('Laptop', 10000, 'Dell', 'laptop.jpeg', 'Gaming Laptop', 0.2);
 
+$book1 = new Book(
+    'Clean Code',
+    300,
+    'Prentice Hall',
+    'book.jpeg',
+    'Programming Book',
+    0.1,
+    ['Pub1', 'Pub2', 'Pub3'],
+    'Robert C. Martin',
+    'White',
+    'Amazon'
+);
 
+$book1->choosePublisher();
 
+$babyCar1 = new BabyCar(
+    'Baby Stroller',
+    2000,
+    'Chicco',
+    'babycar.jpeg',
+    'Comfortable Baby Car',
+    0.15,
+    2,
+    10,
+    ['Plastic', 'Metal'],
+    0.2
+);
 
+$babyCar1->chooseMaterials('Metal');
 
+$products = [$p1, $book1, $babyCar1];
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-$p1 = new Product('laptop', 10000, 'dell', 'laptop.jpeg', 'gaming laptop', 0.3);
-
-$p2 = new Product('Mouse', 500, 'Z-Dragon', 'mouse.jpeg', 'Gaming Mouse', 0.5);
-
-$p3 = new Product('Keyboard', 700, 'hp', 'keyboard.jpeg', 'Gaming Keyboard', 0.2);
-
-$products = [$p1->getProductData(), $p2->getProductData(), $p3->getProductData()];
 
 echo "<div class='container mt-5'><div class='row'>";
 
 foreach ($products as $product) {
+    $data = $product->getProductData();
 
     echo "
     <div class='col-md-4 mb-4'>
         <div class='card h-100'>
-            <img src='{$product['image']}' class='card-img-top'>
+            <img src='{$data['image']}' class='card-img-top'>
 
             <div class='card-body'>
-                <h5 class='card-title'>{$product['name']}</h5>
-                <p class='card-text'>{$product['description']}</p>
+                <h5 class='card-title'>{$data['name']}</h5>
+                <p class='card-text'>{$data['description']}</p>
 
-                <p class='price'>Price: {$product['price']} \$</p>
-                <p>After Discount: {$product['priceAfterDiscount']} \$</p>
-                <p class='final-price'>Final Price: {$product['finalPrice']} \$</p>
+                <p class='price'>Price: {$data['price']} \$</p>
+                <p>After Discount: {$data['priceAfterDiscount']} \$</p>
+                <p class='final-price'>Final Price: {$data['finalPrice']} \$</p>";
 
+    if ($product instanceof Book) {
+        echo "
+            <p><strong>Writer:</strong> {$data['writer']}</p>
+            <p><strong>Publisher:</strong> {$data['selectedPublisher']}</p>
+        ";
+    } elseif ($product instanceof BabyCar) {
+        echo "
+            <p><strong>Age:</strong> {$data['age']} years</p>
+            <p><strong>Material:</strong> {$data['selectedMaterial']}</p>
+        ";
+    } else {
+        echo "</br>";
+        echo "</br>";
+        echo "</br>";
+    }
+
+
+
+    echo "
                 <button class='btn btn-primary w-100'>Buy Now</button>
             </div>
         </div>
