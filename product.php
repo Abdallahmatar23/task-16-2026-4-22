@@ -294,7 +294,7 @@ $babyCar1->chooseMaterials('Metal');
 $products = [$p1, $book1, $babyCar1];
 
 
-echo "<div class='container mt-5'><div class='row'>";
+echo "<div class='card-body d-flex flex-column h-100'><div class='row'>";
 
 foreach ($products as $product) {
     $data = $product->getProductData();
@@ -320,8 +320,16 @@ foreach ($products as $product) {
     } elseif ($product instanceof BabyCar) {
         echo "
             <p><strong>Age:</strong> {$data['age']} years</p>
-            <p><strong>Material:</strong> {$data['selectedMaterial']}</p>
+            <p><strong>Selected Material:</strong> {$data['selectedMaterial']}</p>
+            <p><strong>Available Materials:</strong>
         ";
+
+
+        foreach ($data['materials'] as $m) {
+            echo "<span class='badge bg-secondary me-1'>{$m}</span>";
+        }
+
+        echo "</p>";
     } else {
         echo "</br>";
         echo "</br>";
@@ -330,9 +338,10 @@ foreach ($products as $product) {
 
 
 
-    echo "
-                <button class='btn btn-primary w-100'>Buy Now</button>
-            </div>
+    echo "</div>
+            <div class='card-footer bg-white border-0'>
+            <button class='btn btn-primary w-100'>Buy Now</button>
+        </div>
         </div>
     </div>
     ";
