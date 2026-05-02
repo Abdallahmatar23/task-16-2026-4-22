@@ -257,6 +257,103 @@ class BabyCar extends Product
     }
 }
 
+class Gift extends Product
+{
+    private string $recipientName;
+    private string $message;
+    private string $wrapperColor;
+    private float $wrappingCost;
+    private bool $isSurprise = false;
+    private string $occasion;
+    private string $deliveryDate;
+
+
+
+    public function __construct(
+        string $name,
+        float $price,
+        string $brand,
+        string $image,
+        string $description,
+        float $discount,
+        string $recipientName,
+        string $message,
+        string $wrapperColor,
+        float $wrappingCost,
+        // bool $isSurprise,
+        string $occasion,
+        string $deliveryDate
+    ) {
+        parent::__construct($name, $price, $brand, $image, $description, $discount);
+        $this->recipientName = $recipientName;
+        $this->message = $message;
+        $this->wrapperColor = $wrapperColor;
+        $this->wrappingCost = $wrappingCost;
+        // $this->isSurprise = $isSurprise;
+        $this->occasion = $occasion;
+        $this->deliveryDate = $deliveryDate;
+    }
+
+    public function setRecipientName(string $recipientName)
+    {
+        if (strlen($recipientName) >= 2) {
+            $this->recipientName = $recipientName;
+        } else {
+            echo "Recipient Name must be More Than 2 chars";
+        }
+    }
+    public function getRecipientName()
+    {
+        return $this->recipientName;
+    }
+
+    public function setMessage(string $message)
+    {
+        if (strlen($message) >= 5) {
+            $this->message = $message;
+        } else {
+            echo "Message must be More Than 5 chars";
+        }
+    }
+    public function getMessage()
+    {
+        return $this->message;
+    }
+    public function makeSurprise()
+    {
+        $this->isSurprise = true;
+        return "The Gift is surprise";
+    }
+
+
+    public function setWrapper(string $color, float $cost)
+    {
+        $this->wrapperColor = $color;
+        if ($cost > 0) {
+            $this->wrappingCost = $cost;
+        } else {
+            echo "Invalid Wrapping Cost";
+        }
+    }
+    public function calcPrice(): float|string
+    {
+        return parent::calcPrice() + $this->wrappingCost;
+    }
+    public function getProductData(): array
+    {
+        $data = parent::getProductData();
+
+        $data['recipientName'] = $this->recipientName;
+        $data['message'] = $this->message;
+        $data['wrapper'] = $this->wrapperColor;
+        $data['surprise'] = $this->isSurprise;
+        $data['deliveryDate'] = $this->deliveryDate;
+        $data['finalPrice'] = $this->calcPrice();
+
+        return $data;
+    }
+}
+
 
 
 $p1 = new Product('Laptop', 10000, 'Dell', 'laptop.jpeg', 'Gaming Laptop', 0.2);
@@ -291,7 +388,24 @@ $babyCar1 = new BabyCar(
 
 $babyCar1->chooseMaterials('Metal');
 
-$products = [$p1, $book1, $babyCar1];
+$gift1 = new Gift(
+    'Gift Box',
+    500,
+    'unknown',
+    'gift.jpeg',
+    'Birthday Gift Box',
+    0.3,
+    'Ali',
+    'Happy Birthday My Friend',
+    'red',
+    50,
+    'birthday',
+    '23-05-2003'
+);
+$gift1->makeSurprise();
+
+
+$products = [$p1, $book1, $babyCar1, $gift1];
 
 
 echo "<div class='card-body d-flex flex-column h-100'><div class='row'>";
@@ -301,7 +415,7 @@ foreach ($products as $product) {
 
     echo "
     <div class='col-md-4 mb-4'>
-        <div class='card h-100'>
+        <div class='card'>
             <img src='{$data['image']}' class='card-img-top'>
 
             <div class='card-body'>
@@ -330,6 +444,15 @@ foreach ($products as $product) {
         }
 
         echo "</p>";
+
+
+    } elseif ($product instanceof Gift) {
+        echo "
+                    <p><strong>Recipient Name:</strong> {$data['recipientName']} years</p>
+                    <p><strong>Message:</strong> {$data['message']}</p>
+                    <p><strong>Delivery Date:</strong> {$data['deliveryDate']}</p>
+                    <p><strong>Wrapper Color:</strong> {$data['wrapper']}</p>
+                ";
     } else {
         echo "</br>";
         echo "</br>";
